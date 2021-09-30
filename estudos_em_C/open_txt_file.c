@@ -1,3 +1,7 @@
+/**
+ * Programa para abrir um arquivo qualquer
+*/
+
 #include <stdio.h>
 
 int	main(void)

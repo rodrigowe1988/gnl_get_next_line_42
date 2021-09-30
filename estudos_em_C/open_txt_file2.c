@@ -1,3 +1,7 @@
+/**
+ * Outra forma de abrir um arquivo 
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 
