@@ -1,0 +1,4 @@
+Digite o 1o caracter: 
+Digite o 2o caracter: 
+Digite o 3o caracter: 
+Você digitou os caracteres: ffs

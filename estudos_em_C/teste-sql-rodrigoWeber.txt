@@ -1,0 +1,90 @@
+Rodrigo Weber
+Desafio Paripassu
+    -> Vaga de Estágio de Desenvolvimento e Suporte
+
+Comandos de Seleção
+1. Selecione o filme mais antigo:
+SELECT *FROM public.en_filme
+ORDER BY data_lancamento ASC limit 1;
+
+Usei um SELECT * para pegar as todas colunas e o ORDER BY por data_lancamento para devolver somente o filme mais antigo e usei o limit para limitar a uma linha só de retorno. 
+No MySQL eu uso junto ao SELECT o comando TOP 1.
+
+//exemplo em MySQL
+SELECT TOP 1 *
+ORDER BY data_lancamento ASC;
+
+2. Selecione os clientes com a quantidade total de aluguéis realizados. Ordene pela quantidade de aluguéis.
+
+A primeira solução que encontrei foi juntar as duas tabelas:
+SELECT * FROM public.en_cliente, public.en_aluguel
+WHERE public.en_cliente.id_cliente = public.en_aluguel.id_cliente;
+
+A segunda, filtrei somente as colunas que me interessavam:
+SELECT en_cliente.id_cliente, nome, id_aluguelFROM public.en_cliente, public.en_aluguel
+WHERE public.en_cliente.id_cliente = public.en_aluguel.id_cliente;
+
+Usando LEFT JOIN, vi que seria o jeito certo de resolver:
+SELECT C.id_cliente, nome, COUNT(A.valor) AS "alugueis"
+FROM en_cliente AS C
+LEFT JOIN en_aluguel A ON A.id_cliente = C.id_cliente
+GROUP BY C.nome, C.id_cliente
+ORDER BY alugueis ASC;
+
+3. Selecione os clientes com a quantidade de aluguéis realizados e total gasto por ano. Ordene pelo maior valor gasto por ano.
+
+SELECT C.id_cliente, C.nome, COUNT(A.valor) AS "alugueis", A.valor AS total_gasto,DATE_PART('year', A.data_aluguel) AS ano
+FROM en_cliente C
+INNER JOIN en_aluguel A ON A.id_cliente = C.id_cliente
+GROUP BY C.nome, C.id_cliente, A.valor, A.data_aluguel;
+
+Primeiramente usei um SELECT para pegar todos os dados que eram necessários para o exercício.
+Repare que ao usar esse comando os dados ainda continuam totalmente desagrupados. 
+Após isso, fiz a soma do da coluna total_gasto e agrupei somente pelas colunas nome, id_cliente e ano, ordenando a coluna total_gasto do maior para o menor.
+
+SELECT C.id_cliente, C.nome, COUNT(A.valor) AS "alugueis", SUM(A.valor) AS total_gasto,DATE_PART('year', A.data_aluguel) AS ano
+FROM en_cliente C
+INNER JOIN en_aluguel A ON A.id_cliente = C.id_cliente
+GROUP BY C.nome, C.id_cliente, ano
+ORDER BY total_gasto DESC;
+
+Se executar esse código verá que o retorno será aquele que a questão pede.
+
+Comandos de Inserção
+1) Insira um novo cliente com o nome “Rafael”.
+INSERT INTO en_cliente(id_cliente, nome) 
+VALUES(5, 'Rafael');
+OBS: como não foi atribuída nenhuma regra de "auto-increment" na coluna id_cliente, usei o 5 como id que era o próximo número.
+
+2) Insira um novo filme com o nome “Madagascar”, data de lançamento “24/06/2005” e descrição “Animação”.
+
+INSERT INTO en_filme(id_filme, data_lancamento, nome, descricao)
+VALUES(4, '2005-06-24', 'Madagascar', 'Animação');
+OBS: assim como na questão anterior, como não foi atribuída nenhuma regra de "auto-increment" na coluna id_filme, usei o 4 como id que era o próximo número.
+
+3) Insira um novo aluguel no dia 28/08/2005 do filme Madagascar pelo cliente Rafael com o valor de R$ 4.50.
+
+INSERT INTO en_aluguel(id_aluguel, id_cliente, data_aluguel, valor)
+VALUES(8, 5, '2005-08-28', 4.50);
+Simplesmente usei o comando INSERT INTO para inserir os dados na tabela en_aluguel.
+
+4) Insira um novo aluguel no dia 20/09/2005 do filme Madagascar pelo cliente Rafael com o valor de R$ 5.00.
+
+INSERT INTO en_aluguel(id_aluguel, id_cliente, data_aluguel, valor)
+VALUES(9, 5, '2005-09-20', 5.00);
+Simplesmente usar o comando INSERT INTO para inserir a segunda entrada de dados na tabela en_aluguel.
+
+Comandos de atualização
+1) Realize um comando de atualização para aplicar um desconto de 10% em todos os aluguéis realizados pelo cliente Rafael. Considere que o número de alugueis 
+realizados por ele é grande e seria inviável fazer a atualização de cada item em uma query, ou seja, faça a atualização de todos os registros em um único comando SQL.
+
+UPDATE en_aluguel
+SET valor = valor - (valor * 0.1)
+WHERE id_cliente = 5;
+
+Simplesmente peguei a tabela onde estava o valor dos aluguéis pagos, atribui o desconto a coluna desejada, e coloquei o WHERE para filtrar pelo id 5 que é o ID do 
+nosso cliente Rafael. Assim toda vez que rodar esse código, não importa o número de aluguéis que o Rafael possua, irá atualizar todos. Se precisar aplicar descontos 
+(podemos até mesmo usar para aplicar multas por atraso se usarmos uma soma ao invés da subtração) a outros clientes, facilmente podemos alterar esse código sem dificuldades.
+
+
+
