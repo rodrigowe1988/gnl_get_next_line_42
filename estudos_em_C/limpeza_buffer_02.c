@@ -1,4 +1,6 @@
-
+/**
+ * Para evitar as 'sujeiras que ficam no buffer do teclado'
+*/
 #include <stdio.h>
 #include <stdlib.h>
 
