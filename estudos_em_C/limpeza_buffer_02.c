@@ -4,11 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int	main()
+int	main(void)
 {
 	char	ch;
 	int		i;
-	char*	vetor;
+	char	vetor[5];
 	for (i = 0; i < 5; i++)
 	{
 		printf("Digite o %do caracter: ", i+1);

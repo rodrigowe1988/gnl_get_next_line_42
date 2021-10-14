@@ -20,6 +20,7 @@ int	main(void)
 	printf("%c", a);
 	printf("%c", b);
 	printf("%c", c);
+	printf("\n");
 
 	return(0);
 }
